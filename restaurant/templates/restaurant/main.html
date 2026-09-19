@@ -1,0 +1,26 @@
+<!-- restaurant/templates/restaurant/main.html-->
+
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Home - Enjoyable Place to Eat{% endblock %}
+
+{% block content %}
+<h2>Location</h2>
+<p>679 Foodies Street, Boston, MA</p>
+
+<h2>Hours of Operation</h2>
+<ul>
+    <li>Monday - Friday: 10:00 AM - 11:00 PM</li>
+    <li> Saturday: 11:00 AM - 10:00 PM</li>
+    <li> Sunday: 11:30 AM - 9:30 PM</li>
+</ul>
+
+<h2>Photos</h2>
+<img src="{% static 'images/restaurant_photo.jpg' %}" alt="The Restaurant" width="250">
+
+<img src="{% static 'images/restaurant_food_ex.jpg' %}" alt="Our Most Popular" width="250">
+
+<p><a href="{% url 'order' %}">Place an Order</a></p>
+
+{% endblock %}

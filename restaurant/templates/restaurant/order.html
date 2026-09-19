@@ -1,0 +1,79 @@
+<!-- restaurant/templates/restaurant/order.html -->
+
+{% extends 'restaurant/base.html' %}
+{% load static %}
+
+{% block title %}Order - Enjoyable Place to Eat{% endblock %}
+
+{% block content %}
+<h2>Place Your Order</h2>
+
+<form action="{% url 'confirmation' %}" method="POST">
+    {% csrf_token %}
+
+    <h3>Your Information</h3>
+    <p>
+        <label>Name:
+            <input type="text" name="name" required>
+         </label>
+    </p>
+    <p>
+        <label>Phone:
+            <input type="text" name="phone" required>
+        </label>
+    </p>
+    <p>
+        <label>Email:
+            <input type="email" name="email" required>
+        </label>
+    </p>
+
+    <h3>Menu</h3>
+
+    <p>
+        <label>
+            <input type="checkbox" name="items" value="Margherita Pizza">
+             Margherita Pizza - $15
+        </label><br>
+        <em>Toppings:</em>
+        <label><input type="checkbox" name="pizza_toppings" value="Extra Cheese">
+        Extra Cheese (+$1.50)</label>
+        <label><input type="checkbox" name="pizza_toppings" value="Pepperoni">
+        Pepperoni (+$2.00)</label>
+        <label><input type="checkbox" name="pizza_toppings" value="Mushrooms">
+        Mushrooms (+$1.00)</label>
+
+        </p>
+
+        <p>
+            <label>
+                <input type="checkbox" name="items" value="House Burger">
+                House Burger - $12.50
+            </label>
+        </p>
+
+        <p>
+            <label>
+                <input type="checkbox" name="items" value="Caesar Salad">
+                Caesar Salad - $9.00
+            </label>
+    </p>
+
+    <p>
+        <label>
+            <input type="checkbox" name="items" value="{{daily_special.name }}">
+            <strong>Daily Special:</strong> {{daily_special.name }} - ${{daily_special.price }}
+        </label><br>
+        <em>{{ daily_special.description }}</em>
+    </p>
+
+    <h3>Special Instructions</h3>
+    <p>
+        <textarea name="instructions" rows="3" cols="40"></textarea>
+    </p>
+
+    <p>
+        <input type="submit" value="Place Order">
+    </p>
+</form>
+{% endblock %}

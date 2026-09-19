@@ -1,0 +1,18 @@
+{% extends 'quotes/base.html' %}
+
+{% block title %}All Quotes{% endblock %}
+
+{% block content %}
+<h2>All Quotes</h2>
+<div class="all-quotes">
+    {% for q in quotes %}
+        <blockquote class="quote-text">"{{ q }}"</blockquote>
+    {% endfor %}
+</div>
+
+<div class="all-images">
+    {% for img in images %}
+        <img src="{{ img }}" alt="Image of Winston Churchill" class="quote-image-small">
+    {% endfor %}
+</div>
+{% endblock %}

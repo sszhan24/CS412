@@ -1,0 +1,27 @@
+<!-- restaurant/templates/restaurant/base.html-->
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Enjoyable Place to Eat{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Enjoyable Place to Eat</h1>
+        <nav>
+            <a href="{% url 'main' %}">Home</a> |
+            <a href="{% url 'order' %}">Order</a>
+        </nav>
+        <hr>
+    </header>
+
+    {% block content %}
+    {% endblock %}
+
+    <hr>
+    <footer>
+        <p>&copy; 2026 Enjoyable Place to Eat. 679 Foodies Street, Boston, MA</p>
+    </footer>
+</body>
+</html>

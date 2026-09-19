@@ -1,0 +1,101 @@
+/* styles.css
+Sion Zhan (sszhan24@bu.edu), 9/12/26
+Description: Styling for the quotes app. */
+
+nav a,
+nav a:visited,
+nav a:active {
+    color: #ecf0f1;
+    background-color: #34495e;
+    padding: 0.5rem 1rem;
+    margin-right: 0.75rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: bold;
+    display: inline-block;
+}
+
+nov a:hover {
+    background-color: #4a6785;
+    text-decoration: none;
+}
+
+body {
+    font-family: Georgia, serif;
+    background-color: #f4f1ea;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 1rem 2rem;
+}
+
+header h1 {
+    margin: 0 0 0.5rem 0;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+main {
+    padding: 2rem;
+}
+
+.quote-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    max-width: 500px;
+}
+
+.quote-image {
+    width: 100%;
+    max-width: 300px;
+    border-radius: 6px;
+    display: block;
+    margin: 0 auto 1rem auto;
+}
+
+.quote-image-small {
+    width: 150px;
+    border-radius: 6px;
+    margin: 0.5rem;
+}
+
+.quote-text {
+    font-style: italic;
+    font-size: 1.2rem;
+}
+
+.all-quotes {
+    margin-bottom: 2rem;
+}
+
+.all-images {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.about-section {
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.bio-dates {
+    color: #777;
+    font-style: italic;
+    margin-top: -0.5rem;
+}
+
+footer {
+    text-align: center;
+    padding: 1rem;
+    color: #777;
+}

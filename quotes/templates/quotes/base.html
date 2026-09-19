@@ -1,0 +1,28 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Quotes{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'quotes/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Famous Quotes</h1>
+        <nav>
+            <a href="{% url 'quotes:Quote of the Day' %}">Quote of the Day</a>
+            <a href="{% url 'quotes:Show All' %}">Show All</a>
+            <a href="{% url 'quotes:About' %}">About </a>
+        </nav>
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer>
+        <p>CS412 Quotes App</p>
+    </footer>
+</body>
+</html>

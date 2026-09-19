@@ -1,0 +1,18 @@
+{% extends 'quotes/base.html' %}
+
+{% block title %}About{% endblock %}
+
+{% block content %}
+<section class="about-section">
+    <h2>About {{ person_name }}</h2>
+    <p class="bio-dates">{{ birthplace }} &middot; {{ birth_year }}&ndash;{{ death_year }}</p>
+    <p>{{ bio }}</p>
+</section>
+
+<section class="about-section">
+    <h2>About the Author</h2>
+    <p>{{ author_name }} built this app.</p>
+    <p>{{ author_bio }}</p>
+    <p>App created: {{creation_date }}</p>
+</section>
+{% endblock %}
