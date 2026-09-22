@@ -1,10 +1,13 @@
 <!-- restaurant/templates/restaurant/base.html-->
+<!-- Sion Zhan (sszhan24@bu.edu), 9/18/26 -->
+<!-- base page providing header and navigation for the page. Also includes needed styling info -->
+
 {% load static %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>{% block title %}Enjoyable Place to Eat{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <link rel="stylesheet" href="{% static 'static/styles.css' %}">
 </head>
 <body>
     <header>
@@ -13,11 +16,11 @@
             <a href="{% url 'main' %}">Home</a> |
             <a href="{% url 'order' %}">Order</a>
         </nav>
-        <hr>
     </header>
-
-    {% block content %}
-    {% endblock %}
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
 
     <hr>
     <footer>

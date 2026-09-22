@@ -1,4 +1,6 @@
 <!-- restaurant/templates/restaurant/main.html-->
+ <!-- Sion Zhan (sszhan24@bu.edu), 9/18/26 -->
+  <!-- main web page for the restaurant -->
 
 {% extends 'restaurant/base.html' %}
 {% load static %}
@@ -17,9 +19,9 @@
 </ul>
 
 <h2>Photos</h2>
-<img src="{% static 'images/restaurant_photo.jpg' %}" alt="The Restaurant" width="250">
+<img src="{% static 'static/images/restaurant_photo.jpg' %}" alt="The Restaurant" width="250">
 
-<img src="{% static 'images/restaurant_food_ex.jpg' %}" alt="Our Most Popular" width="250">
+<img src="{% static 'static/images/restaurant_food_ex.jpg' %}" alt="Our Most Popular" width="250">
 
 <p><a href="{% url 'order' %}">Place an Order</a></p>
 

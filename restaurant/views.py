@@ -93,7 +93,7 @@ def confirmation(request):
         else:
             #otherwise has to be daily special
             price = float(request.POST.get("daily_special_price", 0))
-            order_items.append({
+            ordered_items.append({
                 "name": name,
                 "price": price,
                 "options": [],
@@ -116,6 +116,7 @@ def confirmation(request):
     context = {
         "ordered_items": ordered_items,
         "total": total,
+        "customer": customer,
         "instructions": instructions,
         "ready_time": ready_time,
     }
