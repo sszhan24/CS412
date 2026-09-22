@@ -65,6 +65,7 @@
             <strong>Daily Special:</strong> {{daily_special.name }} - ${{daily_special.price }}
         </label><br>
         <em>{{ daily_special.description }}</em>
+        <input type="hidden" name="daily_special_price" value="{{ daily_special.price}}">
     </p>
 
     <h3>Special Instructions</h3>

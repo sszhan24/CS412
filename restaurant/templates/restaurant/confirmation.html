@@ -1,10 +1,41 @@
 <!-- restaurants/templates/restaurant/confirmation.html-->
 
 {% extends 'restaurant/base.html' %}
-
+{% load static $}
 {% block title %}Confirmation - Enjoyable Place to Eat {% endblock %}
 
 {% block content %}
-<h2>Order Confirmation</h2>
-<p>Order processing coming soon.</p>
+<h2>Thank you, {{ customer.name }}</h2>
+<p>Your order has been placed.</p>
+
+<h3>Order Summary</h3>
+<ul>
+    {% for item in ordered_items %}
+        <li>
+            {{ item.name }} - ${{ item.price|floatformat:2 }}
+            {% if item.options %}
+                <em>({{ item.options|join:", " }})</em>
+            {% endif %}
+        </li>
+    {% empty %}
+        <li>No items were selected.</li>
+    {% endfor %}
+</ul>
+
+<p><strong>Total: ${{ total|floatformat:2 }}</strong></p>
+
+<h3>Contact Information</h3>
+<p>Phone: {{ customer.phone }}</p>
+<p>Email: {{ customer.email }}</p>
+
+{% if instructions %}
+    <h3>Special Instructions</h3>
+    <p>{{ instructions }}</p>
+{% endif %}
+
+<h3>Ready Time</h3>
+<p>Your order will be ready at <strong>{{ ready_time }}</strong>.</p>
+
+<p><a href="{% url 'order' %}">Place another order</a></p>
+
 {% endblock %}

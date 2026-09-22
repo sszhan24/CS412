@@ -4,6 +4,7 @@
 
 from django.shortcuts import render
 import random
+from datetime import datetime, timedelta
 
 # Create your views here.
 
@@ -46,4 +47,78 @@ def confirmation(request):
 
     template_name = "restaurant/confirmation.html"
 
-    return render(request, template_name)
+    #prices for regular menu items. Keys match values used on checkboxes in
+    #order.html
+    item_prices = {
+        "Margherita Pizza": 15.00,
+        "House Burger": 12.50,
+        "Caesar Salad": 9.00,
+    }
+
+    #toppings prices, keyed by topping name from order.html
+    topping_prices = {
+        "Extra Cheese": 1.50,
+        "Pepperoni": 2.00,
+        "Mushrooms": 1.00,
+    }
+
+    #collect items that wer checked
+    ordered_items = []
+    total = 0.0
+
+    #regular items
+    checked_items = request.POST.getlist('items')
+
+    #pizza toppings, only relevant if pizza was actually ordered
+    topping = []
+    if "Margherita Pizza" in checked_items:
+        toppings = request.POST.getlist('pizza_toppings')
+
+    for name in checked_items:
+        #check if a hard-coded menu item
+        if name in item_prices:
+            price = item_prices[name]
+            item_toppings = toppings if name == "Margherita Pizza" else[]
+
+            #add topping prices to pizza total
+            topping_cost = sum(topping_prices[t] for t in item_toppings)
+            price += topping_cost
+
+            ordered_items.append({
+                "name": name,
+                "price": price,
+                "options": item_toppings
+            })
+            total += price
+        else:
+            #otherwise has to be daily special
+            price = float(request.POST.get("daily_special_price", 0))
+            order_items.append({
+                "name": name,
+                "price": price,
+                "options": [],
+            })
+            total += price
+    
+    #customer info
+    customer = {
+        "name": request.POST.get("name", ""),
+        "phone": request.POST.get("phone", ""),
+        "email": request.POST.get("email", ""),
+    }
+
+    instructions = request.POST.get("instructions", "")
+
+    #ready time, ranges from 30 to 60 minutes
+    minutes = random.randint(30, 60)
+    ready_time = datetime.now() + timedelta(minutes=minutes)
+
+    context = {
+        "ordered_items": ordered_items,
+        "total": total,
+        "instructions": instructions,
+        "ready_time": ready_time,
+    }
+
+
+    return render(request, template_name, context)
