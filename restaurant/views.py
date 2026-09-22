@@ -5,6 +5,7 @@
 from django.shortcuts import render
 import random
 from datetime import datetime, timedelta
+from django.utils import timezone
 
 # Create your views here.
 
@@ -111,7 +112,7 @@ def confirmation(request):
 
     #ready time, ranges from 30 to 60 minutes
     minutes = random.randint(30, 60)
-    ready_time = datetime.now() + timedelta(minutes=minutes)
+    ready_time = timezone.localtime() + timedelta(minutes=minutes)
 
     context = {
         "ordered_items": ordered_items,
