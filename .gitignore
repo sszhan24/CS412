@@ -1,0 +1,6 @@
+#ice cream problem quiz 1 prep
+quiz1_prep_ice_cream/
+icecream/
+__pycache__/
+*.pyc
+db.sqlite3
