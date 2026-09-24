@@ -24,4 +24,5 @@ urlpatterns = [
     path('', include('quotes.urls')),            
     path('quotes/', include('quotes.urls')),
     path('formdata/', include('formdata.urls')),
+    path('blog/', include('blog.urls')), #include URLs from blog project's url.py
 ]
