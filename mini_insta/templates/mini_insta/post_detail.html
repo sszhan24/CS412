@@ -1,0 +1,32 @@
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Post by
+    <a href="{% url 'mini_insta:profile-detail' post.author.pk %}">
+        {{ post.author.username }}
+    </a>
+</h1>
+<p><small>{{ post.created_at|date:"M d, Y H:i" }}</small></p>
+
+{% if post.image_url %}
+    <img src="{{ post.image_url }}" alt="post image" style="max-width:100%;">
+{% endif %}
+
+<p>{{ post.caption }}</p>
+
+<h2>Comments ({{ post.comments.count }})</h2>
+<ul>
+    {% for comment in post.comments.all %}
+    <li>
+        <strong>
+            <a href="{% url 'mini_insta:profile-detail' comment.author.pk %}">
+                {{ comment.author.username }}
+            </a>
+        </strong>: {{ comment.text }}
+    </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'mini_insta:post-list' %}">Back to feed</a>
+{% endblock %}

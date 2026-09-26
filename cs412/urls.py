@@ -21,8 +21,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('restaurant/', include('restaurant.urls')),  
     path('hw/', include('hw.urls')),     
-    path('', include('quotes.urls')),            
+    #path('', include('quotes.urls')),            
     path('quotes/', include('quotes.urls')),
     path('formdata/', include('formdata.urls')),
     path('blog/', include('blog.urls')), #include URLs from blog project's url.py
+    path('mini_insta/', include('mini_insta.urls')),
 ]

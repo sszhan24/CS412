@@ -1,0 +1,21 @@
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>{{ profile.username }}</h1>
+{% if profile.display_name %}<p><em>{{ profile.display_name }}</em></p>{% endif %}
+{% if profile.bio_text %}<p>{{ profile.bio_text }}</p>{% endif %}
+<h2>Posts by {{ profile.username }}</h2>
+<ul>
+    {% for post in profile.posts.all %}
+        <li>
+            <a href="{% url 'mini_insta:post-detail' post.pk %}">
+                {{ post.caption|default:"(no caption)"|truncatechars:40 }}
+            </a>
+            <small>- {{ post.created_at|date:"M d, Y" }}</small>
+        </li>
+    {% empty %}
+        <li>No posts yet.</li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'mini_insta:show_all_profiles' %}">All profiles</a>
+{% endblock %}
