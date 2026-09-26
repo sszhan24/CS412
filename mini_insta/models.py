@@ -8,7 +8,7 @@ class Profile(models.Model):
 
     username = models.CharField(max_length=50, unique=True)
     display_name = models.CharField(max_length=100, blank=True)
-    profile_img_url = models.URLField(blank=True)
+    profile_image_url = models.URLField(blank=True)
     bio_text = models.TextField(blank=True)
     join_date = models.DateField(auto_now_add=True)
 
