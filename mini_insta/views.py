@@ -29,5 +29,5 @@ class ProfileDetailView(DetailView):
     """Show a profile's bio and all posts authored by that profile."""
 
     model = Profile
-    template_name = 'mini_insta/profile_detail.html'
+    template_name = 'mini_insta/show_profile.html'
     context_object_name = 'profile'

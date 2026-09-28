@@ -14,16 +14,26 @@
         {% for profile in profiles %}
         <tr>
             <td>
-                {% if profile.profile_image_url %}
-                <img src="{{ profile.profile_image_url }}" alt="{{ profile.username }}" width="80">
-                {% endif %}
+                <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+                    {% if profile.profile_image_url %}
+                        <img src="{{ profile.profile_image_url }}"
+                            alt="{{ profile.username }}"
+                            wdith="80">
+                    {% else %}
+                        (no image)
+                    {% endif %}
+                </a>
             </td>
             <td>
-                <a href="{% url 'mini_insta:profile-detail' profile.pk %}">
+                <a href="{% url 'mini_insta:show_profile' profile.pk %}">
                     {{ profile.username }}
                 </a>
             </td>
-            <td>{{ profile.display_name }}</td>
+            <td>
+                <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+                    {{ profile.display_name|default:profile.username }}
+                </a>
+            </td>
         </tr>
         {% empty %}
         <tr><td colspan="3">No profiles yet.</td></tr>

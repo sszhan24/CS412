@@ -11,5 +11,5 @@ urlpatterns = [
     path('feed/', views.PostListView.as_view(), name='post-list'),
     path('post/<int:pk>/', views.PostDetailView.as_view(), name='post-detail'),
     path('', views.ProfileListView.as_view(), name='show_all_profiles'),
-    path('profiles/<int:pk>/', views.ProfileDetailView.as_view(), name='profile-detail'),
+    path('profile/<int:pk>/', views.ProfileDetailView.as_view(), name='show_profile'),
 ]

@@ -1,0 +1,46 @@
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+
+<h1>{{ profile.display_name|default:profile.username }}</h1>
+
+<div class="profile-header">
+    {% if profile.profile_image_url %}
+        <img src="{{ profile.profile_image_url }}"
+        alt="{{ profile.username }}"
+        width="200"
+        class="profile-image">
+    {% endif %}
+</div>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Username</th>
+            <td>{{ profile.username }}</td>
+        </tr>
+        <tr>
+            <th>Display Name</th>
+            <td>{{ profile.display_name|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Bio</th>
+            <td>{{ profile.bio_text|default:"-" }}</td>
+        </tr>
+        <tr>
+            <th>Joined</th>
+            <td>{{ profile.join_date }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Stats</h2>
+<ul>
+    <li>Followers: <em>coming soon</em></li>
+    <li>Following: <em>coming soon</em></li>
+    <li>Posts: {{ profile.posts.count }}</li>
+</ul>
+
+<h2>Posts</h2>
+<p><em>Post list will be added in the future.</em></p>
+
+{% endblock %}
