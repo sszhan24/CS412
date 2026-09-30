@@ -1,3 +1,7 @@
+#models.py
+#Sion Zhan (sszhan24@bu.edu), 9/30/26
+#Defines the app's data models
+
 from django.db import models
 from django.urls import reverse
 

@@ -1,3 +1,7 @@
+#apps.py
+#Sion Zhan (sszhan24@bu.edu), 9/30/26
+#Contains MiniInstaConfig, the app's configuration class
+
 from django.apps import AppConfig
 
 

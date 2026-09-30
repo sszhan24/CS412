@@ -1,6 +1,7 @@
 #urls.py
 #Sion Zhan (sszhan24@bu.edu), 9/24/2026
-#Description: url patterns/configuration for mini insta app
+#Description: url patterns/configuration for mini insta app.
+#Maps url patterns to views
 
 from django.urls import path
 from . import views

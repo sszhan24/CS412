@@ -1,3 +1,7 @@
+#views.py
+#Sion Zhan (sszhan24@bu.edu), 9/30/26
+#Defines class based views that get data and delegate to templates
+
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
 from .models import Post, Profile

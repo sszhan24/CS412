@@ -1,3 +1,9 @@
+#admin.py
+#Sion Zhan (sszhan24@bu.edu), 9/30/26
+#Registers Profile, Post, and Comment with Django admin
+#so records can be manipulated through /admin/
+
+
 from django.contrib import admin
 from .models import Profile, Post, Comment
 
