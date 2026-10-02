@@ -5,7 +5,7 @@
 
 
 from django.contrib import admin
-from .models import Profile, Post, Comment
+from .models import Profile, Post, Comment, Photo
 
 # Register your models here.
 
@@ -16,20 +16,34 @@ class ProfileAdmin(admin.ModelAdmin):
     list_display = ('username', 'display_name', 'join_date')
     search_fields = ('username', 'display_name')
 
-class CommentInLine(admin.TabularInline):
+class CommentInline(admin.TabularInline):
     """Allow comments to be edited inline on a Post's admin page."""
 
     model = Comment
+    extra = 1
+
+class PhotoInline(admin.TabularInline):
+    """Allow photos to be edited inline on a Post's admin page."""
+
+    model = Photo
     extra = 1
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     """Admin configuration for Posts, with inline comments."""
 
-    list_display = ('__str__', 'author', 'created_at')
-    list_filter = ('author', 'created_at')
+    list_display = ('__str__', 'profile', 'timestamp')
+    list_filter = ('profile', 'timestamp')
     search_fields = ('caption',)
-    inlines = [CommentInLine]
+    inlines = [PhotoInline, CommentInline]
+
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+    """Admin configuration for browsing Photos directly."""
+
+    list_display = ('__str__', 'post', 'timestamp')
+    list_filter = ('post',)
+
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
     """Admin configuration for browsing comments directly."""

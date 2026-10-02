@@ -46,6 +46,26 @@
 </ul>
 
 <h2>Posts</h2>
-<p><em>Post list will be added in the future.</em></p>
-
+{% for post in profile.get_all_posts %}
+    <div class="post">
+        <a href="{% url 'mini_insta:show_post' post.pk %}">
+            {% with first_photo=post.get_all_photos.first %}
+                {% if first_photo %}
+                    <img src="{{ first_photo.image_url }}" alt="post photo" width="150">
+                {% else %}
+                    <img src="https://via.placeholder.com/150?text=No+Image"
+                    alt="no image" width="150">
+                {% endif %}
+            {% endwith %}
+        </a>
+        <p>
+            <a href="{% url 'mini_insta:show_post' post.pk %}">
+                {{ post.caption|default:"(no caption)"|truncatechars:60 }}
+            </a>
+            <small>- {{ post.timestamp|date:"M d, Y" }}</small>
+        </p>
+    </div>
+{% empty %}
+    <p>No posts yet.</p>
+{% endfor %}
 {% endblock %}

@@ -1,6 +1,6 @@
 #views.py
 #Sion Zhan (sszhan24@bu.edu), 9/30/26
-#Defines class based views that get data and delegate to templates
+#Defines class based views that get data and delegate the work
 
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
@@ -19,7 +19,7 @@ class PostDetailView(DetailView):
     """Show a single post along with its comments and author link."""
 
     model = Post
-    template_name = 'mini_insta/post_detail.html'
+    template_name = 'mini_insta/show_post.html'
     context_object_name = 'post'
 
 class ProfileListView(ListView):

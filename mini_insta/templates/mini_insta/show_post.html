@@ -1,0 +1,44 @@
+<!-- show_post.html
+    Sion Zhan (sszhan24@bu.edu), 9/30/26
+    display single post with it's information
+-->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Post by
+    <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+        {{ post.profile.username }}
+    </a>
+</h1>
+<p><small>{{ post.timestamp|date:"M d, Y H:i" }}</small></p>
+
+{% if post.caption %}
+    <p>{{ post.caption }}</p>
+{% endif %}
+
+<h2>Photos ({{ post.get_all_photos.count }})</h2>
+<div class="photo-grid">
+    {% for photo in post.get_all_photos %}
+        <img src="{{ photo.image_url }}" alt="photo" width="200">
+    {% empty %}
+        <p><em>No photos for this post.</em></p>
+    {% endfor %}
+</div>
+
+<h2>Comments ({{ post.comments.count }})</h2>
+<ul>
+    {% for comment in post.comments.all %}
+        <li>
+            <strong>
+                <a href="{% url 'mini_insta:show_profile' comment.author.pk %}">
+                    {{ comment.author.username }}
+                </a>
+            </strong>: {{ comment.text }}
+        </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'mini_insta:show_profile' post.profile.pk %}">Back to profile</a></p>
+{% endblock %}

@@ -10,17 +10,22 @@
 {% for post in posts %}
     <div class="post">
         <h3>
-            <a href="{% url 'mini_insta:post-detail' post.pk %}">
-                {{ post.author.username }}
+            <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+                {{ post.profile.username }}
             </a>
-            <small>- {{ post.created_at|date:"M d, Y H:i" }}</small>
+            <small>- {{ post.timestamp|date:"M d, Y H:i" }}</small>
         </h3>
-        {% if post.image_url %}
-            <img src="{{ post.image_url }}" alt="post image">
-        {% endif %}
+        
+        {% with first_photo=post.get_all_photos.first %}
+            {% if first_photo %}
+                <a href="{% url 'mini_insta:show_post' post.pk %}">
+                    <img src="{{ first_photo.image_url }}" alt="post photo" width="200">
+                </a>
+            {% endif %}
+        {% endwith %}
+
         <p>{{ post.caption }}</p>
-        <p><em>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</em>
-        </p>
+        <p><em>{{ post.comments.count }} comment{{ post.comments.count|pluralize }}</em></p>
     </div>
 {% empty %}
     <p>No posts yet. Add some in the <a href="/admin/">admin</a>.</p>

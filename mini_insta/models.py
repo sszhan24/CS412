@@ -8,7 +8,7 @@ from django.urls import reverse
 # Create your models here.
 
 class Profile(models.Model):
-    """A simplified user account: just a username and a bio"""
+    """A simplified user account with a username, display name, and profile image."""
 
     username = models.CharField(max_length=50, unique=True)
     display_name = models.CharField(max_length=100, blank=True)
@@ -24,28 +24,57 @@ class Profile(models.Model):
     def get_absolute_url(self):
         """return the official url for this profile's detail page."""
 
-        return reverse('mini_insta:profile-detail', args=[self.pk])
+        return reverse('mini_insta:show_profile', args=[self.pk])
+
+    def get_all_posts(self):
+        """Return all Posts by this Profile, ordered newest first."""
+
+        return self.posts.all().order_by('-timestamp')
 
 class Post(models.Model):
-    """An image and caption posted by a profile"""
+    """An IG post: a caption by a Profile, containing one or more Photos."""
 
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
+    timestamp = models.DateTimeField(auto_now_add=True)
     caption = models.TextField(blank=True)
-    image_url = models.URLField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+    #author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='posts')
+    #caption = models.TextField(blank=True)
+    #image_url = models.URLField(blank=True)
+    #created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']   #newest first
+        ordering = ['-timestamp']   #newest first
     
     def __str__(self):
         """return string representation"""
 
-        return f"{self.author.username}: {self.caption[:30]}"
+        return f"{self.profile.username}: {self.caption[:30]}"
 
     def get_absolute_url(self):
         """return the actual URL for this post's detail page."""
 
-        return reverse('mini_insta:post-detail', args=[self.pk])
+        return reverse('mini_insta:show_post', args=[self.pk])
+
+    def get_all_photos(self):
+        """Return all Photos attached to this Post, ordered oldest first."""
+
+        return self.photos.all().order_by('timestamp')
+
+class Photo(models.Model):
+    """An image associated with a Post."""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='photos')
+    image_url = models.URLField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['timestamp']
+    
+    def __str__(self):
+        """Return a short description of the Photo."""
+
+        return f"Photo for post {self.post_id}"
 
 class Comment(models.Model):
     """A comment left by one profile on another Profile's Post."""
@@ -59,4 +88,6 @@ class Comment(models.Model):
         ordering = ['created_at']  #oldest first
     
     def __str__(self):
+        """Return 'Comment by <author> on <post>'."""
+
         return f"Comment by {self.author.username} on {self.post}"
