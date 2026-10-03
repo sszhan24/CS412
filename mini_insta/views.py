@@ -2,9 +2,11 @@
 #Sion Zhan (sszhan24@bu.edu), 9/30/26
 #Defines class based views that get data and delegate the work
 
-from django.shortcuts import render
-from django.views.generic import ListView, DetailView
-from .models import Post, Profile
+from django.shortcuts import get_object_or_404
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView
+from .forms import CreatePostForm
+from .models import Profile, Post, Photo
 
 # Create your views here.
 
@@ -35,3 +37,38 @@ class ProfileDetailView(DetailView):
     model = Profile
     template_name = 'mini_insta/show_profile.html'
     context_object_name = 'profile'
+
+class CreatePostView(CreateView):
+    """Display a form to create a Post for a given Profile, then save it."""
+
+    model = Post
+    form_class = CreatePostForm
+    template_name = 'mini_insta/create_post_form.html'
+
+    def get_context_data(self, **kwargs):
+        """Add the Profile(from the URL pk) to the template context."""
+
+        context = super().get_context_data(**kwargs)
+        context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        
+        return context
+    
+    def form_valid(self, form):
+        """Attach the Profile to the Post, then create a Photo if provided."""
+
+        #attach the Profile FK before saving the Post
+        form.instance.profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        response = super().form_valid(form)
+
+        #if user provided image URL, create a Photo for the Post
+        image_url = form.cleaned_data.get('image_url')
+        if image_url:
+            Photo.objects.create(post=self.object, image_url=image_url)
+        
+        return response
+    
+    def get_success_url(self):
+        """redirect to the newly created Post's detail page."""
+
+        return reverse_lazy('mini_insta:show_post', kwargs={'pk': self.object.pk})
+

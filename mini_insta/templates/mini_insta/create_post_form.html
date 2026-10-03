@@ -1,0 +1,32 @@
+<!-- create_post_form.html
+    Sion Zhan (sszhan24@bu.edu), 10/2/26
+    Form for creating a new Post for a given Profile. -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Create a New Post</h1>
+<p><em>for {{ profile.username }}</em></p>
+
+<form method="POST"
+    action="{% url 'mini_insta:create_post' profile.pk %}">
+    {% csrf_token %}
+
+    {% for field in form %}
+        <p>
+            <label for="{{ field.id_for_label }}">{{ field.label }}:</label><br>
+            {{ field }}
+            {% if field.help_text %}
+                <br><small>{{ field.help_text }}</small>
+            {% endif %}
+            {% if field.errors %}
+                <br><span class="error">{{ field.errors }}</span>
+            {% endif %}
+        </p>
+    {% endfor %}
+
+    <button type="submit">Submit</button>
+    <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+        <button type="button">Cancel</button>
+    </a>
+</form>
+{% endblock %}
