@@ -50,8 +50,8 @@
     <div class="post">
         <a href="{% url 'mini_insta:show_post' post.pk %}">
             {% with first_photo=post.get_all_photos.first %}
-                {% if first_photo %}
-                    <img src="{{ first_photo.image_url }}" alt="post photo" width="150">
+                {% if first_photo and first_photo.get_image_url %}
+                    <img src="{{ first_photo.get_image_url }}" alt="post photo" width="150">
                 {% else %}
                     <img src="https://via.placeholder.com/150?text=No+Image"
                     alt="no image" width="150">

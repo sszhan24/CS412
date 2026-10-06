@@ -19,7 +19,7 @@
 <h2>Photos ({{ post.get_all_photos.count }})</h2>
 <div class="photo-grid">
     {% for photo in post.get_all_photos %}
-        <img src="{{ photo.image_url }}" alt="photo" width="200">
+        <img src="{{ photo.get_image_url }}" alt="photo" width="200">
     {% empty %}
         <p><em>No photos for this post.</em></p>
     {% endfor %}

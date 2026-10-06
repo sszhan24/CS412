@@ -27,6 +27,7 @@ class PhotoInline(admin.TabularInline):
 
     model = Photo
     extra = 1
+    fields = ('image_url', 'image_file', 'timestamp')
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):

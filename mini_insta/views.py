@@ -61,10 +61,15 @@ class CreatePostView(CreateView):
         response = super().form_valid(form)
 
         #if user provided image URL, create a Photo for the Post
-        image_url = form.cleaned_data.get('image_url')
-        if image_url:
-            Photo.objects.create(post=self.object, image_url=image_url)
+        #image_url = form.cleaned_data.get('image_url')
+        #if image_url:
+        #    Photo.objects.create(post=self.object, image_url=image_url)
         
+        #read uploaded files from request.FILES
+        files = self.request.FILES.getlist('files')
+        for f in files:
+            Photo.objects.create(post=self.object, image_file=f)
+
         return response
     
     def get_success_url(self):

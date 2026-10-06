@@ -62,10 +62,11 @@ class Post(models.Model):
         return self.photos.all().order_by('timestamp')
 
 class Photo(models.Model):
-    """An image associated with a Post."""
+    """An image associated with a Post. Stored either as URL or uploaded file"""
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='photos')
-    image_url = models.URLField()
+    image_url = models.URLField(blank=True)
+    image_file = models.FileField(upload_to='mini_insta/photos/', blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -74,7 +75,22 @@ class Photo(models.Model):
     def __str__(self):
         """Return a short description of the Photo."""
 
-        return f"Photo for post {self.post_id}"
+        if self.image_url:
+            return f"Photo (URL) for post {self.post_id}"
+        elif self.image_file:
+            return f"Photo (file: {self.image_file.name}) for post {self.post_id}"
+
+        return f"Photo (empty) for post {self.post_id}"
+
+    def get_image_url(self):
+        """Return the URL for this Photo, prefers image_url over image_file."""
+
+        if self.image_url:
+            return self.image_url
+        elif self.image_file:
+            return self.image_file.url
+            
+        return ''
 
 class Comment(models.Model):
     """A comment left by one profile on another Profile's Post."""
