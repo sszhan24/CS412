@@ -8,6 +8,12 @@
 
 <h1>{{ profile.display_name|default:profile.username }}</h1>
 
+<p>
+    <a href="{% url 'mini_insta:update_profile' profile.pk %}">
+        <button type="button">Update Profile</button>
+    </a>
+</p>
+
 <div class="profile-header">
     {% if profile.profile_image_url %}
         <img src="{{ profile.profile_image_url }}"

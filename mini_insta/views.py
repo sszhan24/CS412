@@ -4,8 +4,8 @@
 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView
-from .forms import CreatePostForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from .forms import CreatePostForm, UpdateProfileForm
 from .models import Profile, Post, Photo
 
 # Create your views here.
@@ -77,3 +77,9 @@ class CreatePostView(CreateView):
 
         return reverse_lazy('mini_insta:show_post', kwargs={'pk': self.object.pk})
 
+class UpdateProfileView(UpdateView):
+    """Display a form to update a profile, then save the changes"""
+
+    model = Profile
+    form_class = UpdateProfileForm
+    template_name = 'mini_insta/update_profile_form.html'

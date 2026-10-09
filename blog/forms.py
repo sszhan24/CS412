@@ -22,3 +22,13 @@ class CreateArticleForm(forms.ModelForm):
 
         model = Article
         fields = ['author', 'title', 'text', 'image_url']
+
+class UpdateArticleForm(forms.ModelForm):
+    """A form to udpate a quote to the database."""
+
+    class Meta:
+        """associate this form with the Article model."""
+
+        model = Article
+        fields = ['title', 'text', ]   #which fields from model should we use
+        

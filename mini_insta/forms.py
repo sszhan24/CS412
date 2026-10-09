@@ -20,3 +20,12 @@ class CreatePostForm(forms.ModelForm):
         """Call parent init, kept explicit for clarity"""
 
         super().__init__(*args, **kwargs)
+
+class UpdateProfileForm(forms.ModelForm):
+    """Form for updating an existing Profile"""
+
+    class Meta:
+        """Metadata for UpdateProfileForm"""
+
+        model = Profile
+        fields = ['display_name', 'profile_image_url', 'bio_text']
