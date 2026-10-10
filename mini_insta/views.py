@@ -3,9 +3,9 @@
 #Defines class based views that get data and delegate the work
 
 from django.shortcuts import get_object_or_404
-from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from .forms import CreatePostForm, UpdateProfileForm
+from django.urls import reverse_lazy, reverse
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 from .models import Profile, Post, Photo
 
 # Create your views here.
@@ -83,3 +83,32 @@ class UpdateProfileView(UpdateView):
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'mini_insta/update_profile_form.html'
+
+class UpdatePostView(UpdateView):
+    """Display a form to update a post's caption, then save it"""
+
+    model = Post
+    form_class = UpdatePostForm
+    template_name = 'mini_insta/update_post_form.html'
+
+class DeletePostView(DeleteView):
+    """Confirm and delete a post, then redirect to the author's profile"""
+
+    model = Post
+    template_name = 'mini_insta/delete_post_form.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        """Add the post and its author's profile to the template context"""
+
+        context = super().get_context_data(**kwargs)
+        post = self.get_object()
+        context['post'] = post
+        context['profile'] = post.profile
+        return context
+
+    def get_success_url(self):
+        """Redirects to the profile page of the Post's author"""
+
+        post = self.get_object()
+        return reverse('mini_insta:show_profile', kwargs={'pk': post.profile.pk})
