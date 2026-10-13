@@ -31,6 +31,33 @@ class Profile(models.Model):
 
         return self.posts.all().order_by('-timestamp')
 
+    #follow accessors
+    def get_followers(self):
+        """Return a list of profiles who follow this profile"""
+
+        #follows where this profile is the one being followed
+        follows = Follow.objects.filter(profile=self)
+        #extract the follower profile from each
+        return [f.follower_profile for f in follows]
+
+    def get_num_followers(self):
+        """Return the number of profiles following this profile"""
+
+        return Follow.objects.filter(profile=self).count()
+
+    def get_following(self):
+        """Return a list of profiles this profile is following"""
+
+        #follows where this profile is the one doing the following
+        follows = Follow.objects.filter(follower_profile=self)
+        #extract the followed profile from each
+        return [f.profile for f in follows]
+
+    def get_num_following(self):
+        """Return the number of profiles this profile is following"""
+
+        return Follow.objects.filter(follower_profile=self).count()
+
 class Post(models.Model):
     """An IG post: a caption by a Profile, containing one or more Photos."""
 
@@ -60,6 +87,16 @@ class Post(models.Model):
         """Return all Photos attached to this Post, ordered oldest first."""
 
         return self.photos.all().order_by('timestamp')
+
+    def get_all_comments(self):
+        """Return all comments on this post, oldest first"""
+
+        return Comment.objects.filter(post=self).order_by('timestamp')
+
+    def get_likes(self):
+        """Return all likes on this post"""
+
+        return Like.objects.filter(post=self)
 
 class Photo(models.Model):
     """An image associated with a Post. Stored either as URL or uploaded file"""
@@ -96,14 +133,39 @@ class Comment(models.Model):
     """A comment left by one profile on another Profile's Post."""
 
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comments')
     text = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['created_at']  #oldest first
+        ordering = ['timestamp']  #oldest first
     
     def __str__(self):
         """Return 'Comment by <author> on <post>'."""
 
-        return f"Comment by {self.author.username} on {self.post}"
+        return f"Comment by {self.profile.username} on {self.post}"
+
+class Follow(models.Model):
+    """A one directional follow relation between two profiles"""
+
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='profile')
+    follower_profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='follower_profile')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return '<follower> follows <profile>'"""
+
+        return f"{self.follower_profile.username} follows {self.profile.username}"
+
+class Like(models.Model):
+    """A like on a post by a profile"""
+
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='likes')
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        """Return '<profile> likes post <id>'"""
+
+        return f"{self.profile.username} likes post {self.post_id}"
+        

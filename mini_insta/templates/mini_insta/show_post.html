@@ -18,11 +18,13 @@
         <button type="button">Update</button>
     </a>
 
-    
+
     <a href="{% url 'mini_insta:delete_post' post.pk %}">
         <button type="button">Delete</button>
     </a>
 </p>
+
+<p><strong>Likes: {{ post.get_likes.count }}</strong></p>
 
 {% if post.caption %}
     <p>{{ post.caption }}</p>
@@ -37,15 +39,16 @@
     {% endfor %}
 </div>
 
-<h2>Comments ({{ post.comments.count }})</h2>
+<h2>Comments ({{ post.get_all_comments.count }})</h2>
 <ul>
-    {% for comment in post.comments.all %}
+    {% for comment in post.get_all_comments %}
         <li>
             <strong>
-                <a href="{% url 'mini_insta:show_profile' comment.author.pk %}">
-                    {{ comment.author.username }}
+                <a href="{% url 'mini_insta:show_profile' comment.profile.pk %}">
+                    {{ comment.profile.username }}
                 </a>
             </strong>: {{ comment.text }}
+            <small>- {{ comment.timestamp|date:"M d, Y H:i" }}</small>
         </li>
     {% empty %}
         <li>No comments yet.</li>

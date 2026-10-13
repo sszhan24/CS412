@@ -112,3 +112,17 @@ class DeletePostView(DeleteView):
 
         post = self.get_object()
         return reverse('mini_insta:show_profile', kwargs={'pk': post.profile.pk})
+
+class ShowFollowersDetailView(DetailView):
+    """Display the list of profiles who follow a given profile"""
+
+    model = Profile
+    template_name = 'mini_insta/show_followers.html'
+    context_object_name = 'profile'
+
+class ShowFollowingDetailView(DetailView):
+    """Display the list of profiles that a given profile is following"""
+
+    model = Profile
+    template_name = 'mini_insta/show_following.html'
+    context_object_name = 'profile'

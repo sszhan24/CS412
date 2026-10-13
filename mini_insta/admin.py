@@ -5,7 +5,7 @@
 
 
 from django.contrib import admin
-from .models import Profile, Post, Comment, Photo
+from .models import Profile, Post, Comment, Photo, Follow, Like
 
 # Register your models here.
 
@@ -49,5 +49,19 @@ class PhotoAdmin(admin.ModelAdmin):
 class CommentAdmin(admin.ModelAdmin):
     """Admin configuration for browsing comments directly."""
 
-    list_display = ('author', 'post', 'created_at')
-    list_filter = ('author',)
+    list_display = ('profile', 'post', 'timestamp')
+    list_filter = ('profile',)
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    """Admin configuration for browsing follow relations"""
+
+    list_display = ('follower_profile', 'profile', 'timestamp')
+    list_filter = ('profile', 'follower_profile')
+
+@admin.register(Like)
+class LikeAdmin(admin.ModelAdmin):
+    """Admin configuration for browsing likes"""
+
+    list_display = ('profile', 'post', 'timestamp')
+    list_filter = ('profile',)

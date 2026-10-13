@@ -1,0 +1,23 @@
+<!-- show_following.html
+    Sion Zhan (sszhan24@bu.edu), 9/30/26
+    list of profiles the given profile is following
+-->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Profiles {{ profile.username }} follows</h1>
+
+<ul>
+    {% for followed in profile.get_following %}
+        <li>
+            <a href="{% url 'mini_insta:show_profile' followed.pk %}">
+                {{ followed.username }}
+            </a>
+        </li>
+    {% empty %}
+        <li>Not following anyone yet.</li>
+    {% endfor %}
+</ul>
+
+<p><a href="{% url 'mini_insta:show_profile' profile.pk %}">Back to profile</a></p>
+{% endblock %}
