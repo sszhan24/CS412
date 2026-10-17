@@ -1,0 +1,100 @@
+<!-- show_feed.html 
+    Sion Zhan (sszhan24@bu.edu), 9/30/26-
+    Scrollable feed of posts from profiles the current user follows -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Feed</h1>
+<p><em>Posts from profiles {{ profile.username }} follows</em></p>
+
+{% for post in profile.get_post_feed %}
+    <div class="post">
+
+        <!-- post header: author avatar, username, date -->
+        <div class="post-header">
+            {% if post.profile.profile_image_url %}
+                <img src="{{ post.profile.profile_image_url }}"
+                    alt="{{ post.profile.username }}"
+                    width="40" height="40" class="avatar">
+            {% endif %}
+            <strong>
+                <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+                    @{{ post.profile.username }}
+                </a>
+            </strong>
+            <small>{{ post.timestamp|date:"F j, Y" }}</small>
+        </div>
+
+        <!-- First photo of the post (links to full post detail) -->
+        {% with first_photo=post.get_all_photos.first %}
+            {% if first_photo and first_photo.get_image_url %}
+                <a href="{% url 'mini_insta:show_post' post.pk %}">
+                    <img src="{{ first_photo.get_image_url }}"
+                        alt="post photo" width="400" class="post-photo">
+                </a>
+            {% endif %}
+        {% endwith %}
+
+        <!-- likes line: "Liked by @username and n others" -->
+        {% with likes=post.get_likes %}
+            {% if likes.count == 0 %}
+                <p><em>No likes yet.</em></p>
+            {% elif likes.count == 1 %}
+                <p>Liked by
+                    <a href="{% url 'mini_insta:show_profile' likes.first.profile.pk %}">
+                        @{{ likes.first.profile.username }}
+                    </a>
+                </p>
+            {% else %}
+                <p>Liked by
+                    <a href="{% url 'mini_insta:show_profile' likes.first.profile.pk %}">
+                        @{{ likes.first.profile.username }}
+                    </a>
+                    and {{ likes.count|add:"-1" }} other{{ likes.count|add:"-1"|pluralize }}
+                </p>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Caption -->
+        {% if post.caption %}
+            <p>
+                <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+                    <strong>@{{ post.profile.username }}</strong>
+                </a>
+                {{ post.caption }}
+            </p>
+        {% endif %}
+
+        <!-- Comments preview -->
+        {% with comments=post.get_all_comments %}
+            {% if comments.count > 0 %}
+                <h4>Comments ({{ comments.count }})</h4>
+                <ul>
+                    {% for comment in comments %}
+                        <li>
+                            <strong>
+                                <a href="{% url 'mini_insta:show_profile' comment.profile.pk %}">
+                                    @{{ comment.profile.username }}
+                                </a>
+                            </strong>: {{ comment.text }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <p>
+            <a href="{% url 'mini_insta:show_post' post.pk %}">View post</a>
+        </p>   
+    </div>
+    <hr>
+{% empty %}
+    <p>No posts in your feed yet. Follow some profiles to see their posts!</p>
+{% endfor %}
+
+<p>
+    <a href="{% url 'mini_insta:show_profile' profile.pk %}">
+    <button type="button">Back to profile</button>
+    </a>
+</p>
+{% endblock %}

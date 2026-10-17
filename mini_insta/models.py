@@ -58,6 +58,15 @@ class Profile(models.Model):
 
         return Follow.objects.filter(follower_profile=self).count()
 
+    def get_post_feed(self):
+        """Return posts from all profiles this profile follows, newest first"""
+
+        #get the profiles this user follows
+        followed_profiles = self.get_following()
+
+        #filter posts whose author is in that list, newest first
+        return Post.objects.filter(profile__in=followed_profiles).order_by('-timestamp')
+
 class Post(models.Model):
     """An IG post: a caption by a Profile, containing one or more Photos."""
 
@@ -168,4 +177,3 @@ class Like(models.Model):
         """Return '<profile> likes post <id>'"""
 
         return f"{self.profile.username} likes post {self.post_id}"
-        
