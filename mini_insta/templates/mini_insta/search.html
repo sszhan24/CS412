@@ -1,0 +1,19 @@
+<!-- search.html
+    Sion Zhan (sszhan24@bu.edu), 9/30/26
+    Search form to find profiles and posts -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Search</h1>
+<p><em>@{{ profile.username }}</em></p>
+
+<form method="GET" action="{% url 'mini_insta:search' profile.pk %}">
+    <p>
+        <label for="query">Search for text, tags, or people:</label><br>
+        <textarea name="query" id="query" rows="4" cols="40"></textarea>
+    </p>
+    <button type="submit">Search</button>
+</form>
+
+<p><a href="{% url 'mini_insta:show_profile' profile.pk%}">Back to profile</a></p>
+{% endblock %}

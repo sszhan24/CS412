@@ -2,11 +2,12 @@
 #Sion Zhan (sszhan24@bu.edu), 9/30/26
 #Defines class based views that get data and delegate the work
 
-from django.shortcuts import get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 from .models import Profile, Post, Photo
+from django.db.models import Q
 
 # Create your views here.
 
@@ -133,3 +134,54 @@ class ShowFeedView(DetailView):
     model = Profile
     template_name = 'mini_insta/show_feed.html'
     context_object_name = 'profile'
+
+class SearchView(ListView):
+    """Handle the searching for profiles and posts"""
+
+    model = Post
+    template_name = 'mini_insta/search_results.html'
+    context_object_name = 'posts'
+
+    def dispatch(self, request, *args, **kwargs):
+        """Check if a query exists. If not, show the search form"""
+
+        if 'query' not in self.request.GET:
+            #no query submitted, show empty search form
+            profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+            return render(request, 'mini_insta/search.html', {'profile': profile})
+
+        #query exists, proceed with standard ListView dispatch
+        return super().dispatch(request, *args, **kwargs)
+
+    def get_queryset(self):
+        """Return posts matching the search query"""
+
+        query = self.request.GET.get('query', '')
+        if query:
+            #filter posts where the caption contains the query
+            return Post.objects.filter(caption__icontains=query).order_by('-timestamp')
+        return Post.objects.none()
+
+    def get_context_data(self, **kwargs):
+        """Add the profile, query string, and matching profiles to context"""
+
+        context = super().get_context_data(**kwargs)
+
+        #add the profile
+        context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
+
+        #add the query text
+        query = self.request.GET.get('query', '')
+        context['query'] = query
+
+        #add matching profiles (searching username, display name, bio)
+        if query:
+            matching_profiles = Profile.objects.filter(
+                Q(username__icontains=query) |
+                Q(display_name__icontains=query) |
+                Q(bio_text__icontains=query)
+            )
+            context['profiles'] = matching_profiles
+        else:
+            context['profiles'] = Profile.objects.none()
+        return context

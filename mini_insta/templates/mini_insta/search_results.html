@@ -1,0 +1,78 @@
+<!-- search_results.html
+    Sion Zhan (sszhan24@bu.edu) 9/30/26
+    Displays the results of a search for profiles and posts -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Search Results</h1>
+<p><em>@{{ profile.username }}</em></p>
+
+<h2>Profiles matching the query for '{{ query }}'</h2>
+{% for p in profiles %}
+    <div class="profile-result">
+        <a href="{% url 'mini_insta:show_profile' p.pk %}">
+            {% if p.profile_image_url %}
+                <img src="{{ p.profile_image_url }}" alt="{{ p.username }}" width="80">
+            {% else %}
+                {{ p.username }}
+            {% endif %}
+        </a>
+    </div>
+{% empty %}
+    <p>No profiles found.</p>
+{% endfor %}
+
+<hr>
+
+<h2>Posts matching the query for '{{ query }}'</h2>
+{% for post in posts %}
+    <div class="post">
+        <div class="post-header">
+            {% if post.profile.profile_image_url %}
+                <img src="{{ post.profile.profile_image_url }}" alt="{{ post.profile.username }}" width="40" class="avatar">
+            {% endif %}
+            <strong>
+                <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+                    @{{ post.profile.username }}
+                </a>
+            </strong>
+            <small>{{ post.timestamp|date:"F j, Y" }}</small>
+        </div>
+
+        {% with first_photo=post.get_all_photos.first %}
+            {% if first_photo and first_photo.get_image_url %}
+                <a href="{% url 'mini_insta:show_profile' post.pk %}">
+                    <img src="{{ first_photo.get_image_url }}" alt="post photo" width="400" class="post-photo">
+                </a>
+            {% endif %}
+        {% endwith %}
+
+        {% with likes=post.get_likes %}
+            {% if likes.count > 0 %}
+                <p>Liked by
+                    <a href="{% url 'mini_insta:show_profile' likes.first.profile.pk %}">
+                        @{{ likes.first.profile.username }}
+                    </a>
+                    {% if likes.count > 1 %}
+                        and {{ likes.count|add:"-1" }} other{{ likes.count|add:"-1"|pluralize }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        {% endwith %}
+
+        {% if post.caption %}
+            <p>
+                <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
+                    <strong>@{{ post.profile.username }}</strong>
+                </a>
+                {{ post.caption }}
+            </p>
+        {% endif %}
+    </div>
+    <hr>
+{% empty %}
+    <p>No posts found</p>
+{% endfor %}
+
+<p><a href="{% url 'mini_insta:search' profile.pk %}">New Search</a></p>
+{% endblock %}

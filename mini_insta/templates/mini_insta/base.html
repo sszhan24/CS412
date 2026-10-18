@@ -21,12 +21,14 @@
 <body>
     <nav>
         <a href="{% url 'mini_insta:show_all_profiles' %}">Profiles</a>
+        <a href="{% url 'mini_insta:post-list' %}">All Posts</a>
         <a href="{% url 'mini_insta:post-list' %}">Feed</a>
-        <a href="/admin/">Admin</a>
         {% if profile %}
             <a href="{% url 'mini_insta:show_feed' profile.pk %}">My Feed</a>
+            <a href="{% url 'mini_insta:search' profile.pk %}">Search</a>
             <a href="{% url 'mini_insta:show_profile' profile.pk %}">My Profile</a>
         {% endif %}
+        <a href="/admin/">Admin</a>
     </nav>
     <hr>
     {% block content %}{% endblock %}
