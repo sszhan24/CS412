@@ -4,7 +4,7 @@
 
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 from .models import Profile, Post, Photo
 from django.db.models import Q
@@ -14,6 +14,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 class ProfileLoginRequiredMixin(LoginRequiredMixin):
     """A mixin that forces login and automatically finds the logged in user's Profile"""
+
+    def get_login_url(self):
+        """Return the URL to the mini_insta login page"""
+
+        return reverse('mini_insta:login')
 
     def get_object(self):
         """Return the profile associated with the currently logged in user"""
@@ -217,3 +222,8 @@ class MyProfileView(ProfileLoginRequiredMixin, DetailView):
     model = Profile
     template_name = 'mini_insta/show_profile.html'
     context_object_name = 'profile'
+
+class LogoutConfirmationView(TemplateView):
+    """Display the logout confirmation page"""
+
+    template_name = 'mini_insta/logged_out.html'

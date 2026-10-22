@@ -1,0 +1,12 @@
+<!-- logged_out.html
+    Sion Zhan (sszhan24@bu.edu) 9/30/26
+    Confirmation page shown after a user logs out -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+
+<h1>Logged Out</h1>
+<p>You have successfully been logged out</p>
+<p><a href="{% url 'mini_insta:login' %}">Log in again</a></p>
+
+{% endblock %}

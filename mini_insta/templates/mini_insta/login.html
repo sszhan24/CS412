@@ -1,0 +1,22 @@
+<!-- login.html
+    Sion Zhan (sszhan24@bu.edu) 9/30/26
+    login page using Django's built in LoginView form -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Login</h1>
+
+<form method="post" action="{% url 'mini_insta:login' %}">
+    {% csrf_token %}
+
+    {{ form.as_p }}
+
+    <!-- error fix: hidden field for 'next' to redirect after login -->
+    <input type="hidden" name="next" value="{{ request.GET.next|default:'/mini_insta/' }}">
+
+    <button type="submit">Login</button>
+
+</form>
+
+<p>Don't have an account? Registration coming soon</p>
+{% endblock %}

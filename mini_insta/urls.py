@@ -5,6 +5,7 @@
 
 from django.urls import path
 from . import views
+from django.contrib.auth import views as auth_views
 
 app_name = 'mini_insta'
 
@@ -22,4 +23,7 @@ urlpatterns = [
     path('profile/feed', views.ShowFeedView.as_view(), name='show_feed'),
     path('profile/search', views.SearchView.as_view(), name='search'),
     path('profile', views.MyProfileView.as_view(), name='my_profile'),
+    path('login/', auth_views.LoginView.as_view(template_name='mini_insta/login.html'), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(next_page='mini_insta:logout_confirmation'), name='logout'),
+    path('logout-confirmation/', views.LogoutConfirmationView.as_view(), name='logout_confirmation'),
 ]
