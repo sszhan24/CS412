@@ -5,10 +5,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
+from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm, CreateProfileForm
 from .models import Profile, Post, Photo
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 # Create your views here.
 
@@ -227,3 +229,53 @@ class LogoutConfirmationView(TemplateView):
     """Display the logout confirmation page"""
 
     template_name = 'mini_insta/logged_out.html'
+
+class CreateProfileView(CreateView):
+    """Display a form to create a user and a profile simultaneously"""
+
+    model = Profile
+    form_class = CreateProfileForm
+    template_name = 'mini_insta/create_profile_form.html'
+
+    def get_context_data(self, **kwargs):
+        """Add the UserCreationForm to the context"""
+
+        context = super().get_context_data(**kwargs)
+        #if re-rendering after a failure, use user_form from kwargs
+        #otherwise create blank one
+        if 'user_form' not in context:
+            context['user_form'] = UserCreationForm()
+        return context
+
+    def form_valid(self, form):
+        """Process both forms, create the user, log them in, and save the profile"""
+
+        #reconstruct the UserCreationForm from POST data
+        user_form = UserCreationForm(data=self.request.POST)
+
+        #validate the UserCreationForm
+        if user_form.is_valid():
+            #save the user and log them in
+            user = user_form.save()
+            login(self.request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+            #attach the new user to the profile instance before saving
+            form.instance.user = user
+
+            #delegate to super().form_valid to save the profile and redirect
+            return super().form_valid(form)
+        else:
+            #if the UserCreationForm is invalid (e.g., passwords don't match),
+            #re-render the page with errors
+            return self.form_invalid(form)
+
+    def form_invalid(self, form, user_form=None):
+        """Handle invalid form submission, called by form_valid or default POST"""
+
+        #if user_form wasn't passed in (e.g., profile form itself was invalid on initial submit)
+        #recreate it from POST data so it doesn't dissapear
+        if user_form is None:
+            user_form = UserCreationForm(data=self.request.POST)
+
+        #re-render the template with the form errors attached to the context
+        return self.render_to_response(self.get_context_data(form=form, user_form=user_form))

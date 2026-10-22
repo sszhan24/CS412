@@ -1,0 +1,19 @@
+<!-- create_profile_form.html
+    Sion Zhan (sszhan24@bu.edu) 9/30/26
+    Form for registering a new user and creating their profile simultaneously -->
+
+{% extends 'mini_insta/base.html' %}
+{% block content %}
+<h1>Create Profile</h1>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- display the UserCreationForm (username, password, confirm password)-->
+    <h3>Account Information</h3>
+    {{ user_form.as_p }}
+
+    <button type="submit">Register</button>
+    <a href="{% url 'mini_insta:login' %}">Cancel</a>
+</form>
+{% endblock %}
