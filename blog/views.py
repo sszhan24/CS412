@@ -5,10 +5,13 @@ import random
 from .forms import CreateArticleForm, UpdateArticleForm
 from django.shortcuts import render
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-
 from .forms import CreateCommentForm
-
 from django.urls import reverse, reverse_lazy
+
+from django.contrib.auth.mixins import LoginRequiredMixin #NEW
+from django.contrib.auth.forms import UserCreationForm #NEW
+from django.contrib.auth.models import User #NEW
+from django.contrib.auth import login #NEW
 
 # Create your views here.
 
@@ -18,6 +21,16 @@ class ShowAllView(ListView):
     model = Article #retrieve objects of type Article from the database
     template_name = 'blog/show_all.html'
     context_object_name = 'articles' #how to find data in the template file
+
+    def dispatch(self, request, *args, **kwargs):
+        """Override the dispatch method to add debugging information"""
+
+        if request.user.is_authenticated:
+            print(f'ShowAllView.dispatch():request.user={request.user}')
+        else:
+            print(f'ShowAllView.dispatch(): not logged in.')
+
+        return super().dispatch(request, *args, **kwargs)
 
 class ArticleView(DetailView):
     """Show the details for one article."""
@@ -48,6 +61,11 @@ class CreateArticleView(CreateView):
 
     form_class = CreateArticleForm
     template_name = "blog/create_article_form.html"
+
+    def get_login_url(self) -> str:
+        """return the URL required for login"""
+
+        return reverse('login')
 
 
 class CreateCommentView(CreateView):
@@ -136,3 +154,22 @@ class DeleteCommentView(DeleteView):
 
         #reverse to show the article page
         return reverse('article', kwargs={'pk':article.pk})
+
+class RegistrationView(CreateView):
+    """show/process form for account registration"""
+
+    template_name = 'blog/register.html'
+    form_class = UserCreationForm
+    model = User
+
+class UserRegistrationView(CreateView):
+    """A view to show/process the registration form to create a new User"""
+
+    template_name = 'blog/register.html'
+    form_class = UserCreationForm
+    model = User
+
+    def get_success_url(self):
+        """the URL to redirect to after creating a new User"""
+
+        return reverse('login')

@@ -8,11 +8,13 @@
 
 <h1>{{ profile.display_name|default:profile.username }}</h1>
 
-<p>
-    <a href="{% url 'mini_insta:update_profile' profile.pk %}">
-        <button type="button">Update Profile</button>
-    </a>
-</p>
+{% if request.user.is_authenticated and request.user == profile.user %}
+    <p>
+        <a href="{% url 'mini_insta:update_profile' %}">
+            <button type="button">Update Profile</button>
+        </a>
+    </p>
+{% endif %}
 
 <div class="profile-header">
     {% if profile.profile_image_url %}

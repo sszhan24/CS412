@@ -7,7 +7,7 @@
 <h1>Update Profile</h1>
 <p><em>{{ profile.username }}</em></p>
 
-<form method="POST" action="{% url 'mini_insta:update_profile' profile.pk %}">
+<form method="POST" action="{% url 'mini_insta:update_profile' %}">
     {% csrf_token %}
 
     {% for field in form %}

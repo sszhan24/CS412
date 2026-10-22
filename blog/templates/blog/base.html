@@ -15,7 +15,22 @@
                     <li><a href="{% url 'show_all' %}">Show All</a></li>
                     <li><a href="{% url 'random' %}">Random</a></li>
                     <li><a href="{% url 'create_article' %}">Create</a></li>
+
+                    <!-- Add URLs for authentication -->
+                    {% if request.user.is_authenticated %}
+
+                    <li><a href="{% url 'logout' %}">Log out</a></li>
+                    {% else %}
+                    <li><a href="{% url 'login' %}">Log in</a></li>
+                    {% endif %}
                 </ul>
+
+                <!-- show who's logged in -->
+                {% if request.user.is_authenticated %}
+                Logged in user: {{ request.user }}
+                {% else %}
+                Not logged in.
+                {% endif %}
             </nav>
         </head>
         <!-- substitute in the specific content here -->

@@ -8,7 +8,7 @@
 <p><em>for {{ profile.username }}</em></p>
 
 <form method="POST"
-    action="{% url 'mini_insta:create_post' profile.pk %}"
+    action="{% url 'mini_insta:create_post' %}"
     enctype="multipart/form-data">
     {% csrf_token %}
 

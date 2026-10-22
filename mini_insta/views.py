@@ -8,8 +8,19 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView, D
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm
 from .models import Profile, Post, Photo
 from django.db.models import Q
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 # Create your views here.
+
+class ProfileLoginRequiredMixin(LoginRequiredMixin):
+    """A mixin that forces login and automatically finds the logged in user's Profile"""
+
+    def get_object(self):
+        """Return the profile associated with the currently logged in user"""
+
+        #self.request.user is the Django user
+        #we find the profile where profile.user equals this user
+        return get_object_or_404(Profile, user=self.request.user)
 
 class PostListView(ListView):
     """Display all posts in reverse chronological order"""
@@ -39,32 +50,27 @@ class ProfileDetailView(DetailView):
     template_name = 'mini_insta/show_profile.html'
     context_object_name = 'profile'
 
-class CreatePostView(CreateView):
+class CreatePostView(ProfileLoginRequiredMixin, CreateView):
     """Display a form to create a Post for a given Profile, then save it."""
 
     model = Post
     form_class = CreatePostForm
     template_name = 'mini_insta/create_post_form.html'
 
-    def get_context_data(self, **kwargs):
-        """Add the Profile(from the URL pk) to the template context."""
+    #def get_context_data(self, **kwargs):
+    #    """Add the Profile(from the URL pk) to the template context."""
 
-        context = super().get_context_data(**kwargs)
-        context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
+     #   context = super().get_context_data(**kwargs)
+    #    context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
         
-        return context
+    #    return context
     
     def form_valid(self, form):
         """Attach the Profile to the Post, then create a Photo if provided."""
 
-        #attach the Profile FK before saving the Post
-        form.instance.profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        #use the mixin's get_object() to find the logged in user's profile
+        form.instance.profile = self.get_object()
         response = super().form_valid(form)
-
-        #if user provided image URL, create a Photo for the Post
-        #image_url = form.cleaned_data.get('image_url')
-        #if image_url:
-        #    Photo.objects.create(post=self.object, image_url=image_url)
         
         #read uploaded files from request.FILES
         files = self.request.FILES.getlist('files')
@@ -78,26 +84,37 @@ class CreatePostView(CreateView):
 
         return reverse_lazy('mini_insta:show_post', kwargs={'pk': self.object.pk})
 
-class UpdateProfileView(UpdateView):
+class UpdateProfileView(ProfileLoginRequiredMixin, UpdateView):
     """Display a form to update a profile, then save the changes"""
 
     model = Profile
     form_class = UpdateProfileForm
     template_name = 'mini_insta/update_profile_form.html'
 
-class UpdatePostView(UpdateView):
+class UpdatePostView(LoginRequiredMixin, UpdateView):
     """Display a form to update a post's caption, then save it"""
 
     model = Post
     form_class = UpdatePostForm
     template_name = 'mini_insta/update_post_form.html'
 
-class DeletePostView(DeleteView):
+    def get_queryset(self):
+        """Only allow users to update their own posts"""
+
+        #filter posts so users can only edit posts belonging to their profile
+        return Post.objects.filter(profile__user=self.request.user)
+
+class DeletePostView(LoginRequiredMixin, DeleteView):
     """Confirm and delete a post, then redirect to the author's profile"""
 
     model = Post
     template_name = 'mini_insta/delete_post_form.html'
     context_object_name = 'post'
+
+    def get_queryset(self):
+        """Only allow the user to delete posts they created"""
+
+        return Post.objects.filter(profile__user=self.request.user)
 
     def get_context_data(self, **kwargs):
         """Add the post and its author's profile to the template context"""
@@ -111,8 +128,8 @@ class DeletePostView(DeleteView):
     def get_success_url(self):
         """Redirects to the profile page of the Post's author"""
 
-        post = self.get_object()
-        return reverse('mini_insta:show_profile', kwargs={'pk': post.profile.pk})
+        #self.object is still in memory even after it's deleted from the database
+        return reverse('mini_insta:show_profile', kwargs={'pk': self.object.profile.pk})
 
 class ShowFollowersDetailView(DetailView):
     """Display the list of profiles who follow a given profile"""
@@ -128,14 +145,20 @@ class ShowFollowingDetailView(DetailView):
     template_name = 'mini_insta/show_following.html'
     context_object_name = 'profile'
 
-class ShowFeedView(DetailView):
+class ShowFeedView(ProfileLoginRequiredMixin, DetailView):
     """Display a feed of posts from profiles the given profile follows"""
 
     model = Profile
     template_name = 'mini_insta/show_feed.html'
-    context_object_name = 'profile'
+    #context_object_name = 'profile'
 
-class SearchView(ListView):
+    #template will still call it "profile" if we add it to get_context_data
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.get_object()
+        return context
+
+class SearchView(ProfileLoginRequiredMixin, ListView):
     """Handle the searching for profiles and posts"""
 
     model = Post
@@ -145,12 +168,14 @@ class SearchView(ListView):
     def dispatch(self, request, *args, **kwargs):
         """Check if a query exists. If not, show the search form"""
 
-        if 'query' not in self.request.GET:
-            #no query submitted, show empty search form
-            profile = get_object_or_404(Profile, pk=self.kwargs['pk'])
-            return render(request, 'mini_insta/search.html', {'profile': profile})
+        #manually enforce login first
+        if not request.user.is_authenticated:
+            return self.handle_no_permission()
 
-        #query exists, proceed with standard ListView dispatch
+        if 'query' not in self.request.GET:
+            #use self.get_object()
+            return render(request, 'mini_insta/search.html', {'profile': self.get_object()})
+
         return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -168,7 +193,7 @@ class SearchView(ListView):
         context = super().get_context_data(**kwargs)
 
         #add the profile
-        context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
+        context['profile'] = self.get_object()
 
         #add the query text
         query = self.request.GET.get('query', '')
@@ -185,3 +210,10 @@ class SearchView(ListView):
         else:
             context['profiles'] = Profile.objects.none()
         return context
+
+class MyProfileView(ProfileLoginRequiredMixin, DetailView):
+    """Show the logged in user's own profile"""
+
+    model = Profile
+    template_name = 'mini_insta/show_profile.html'
+    context_object_name = 'profile'

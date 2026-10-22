@@ -7,7 +7,7 @@
 <h1>Search</h1>
 <p><em>@{{ profile.username }}</em></p>
 
-<form method="GET" action="{% url 'mini_insta:search' profile.pk %}">
+<form method="GET" action="{% url 'mini_insta:search' %}">
     <p>
         <label for="query">Search for text, tags, or people:</label><br>
         <textarea name="query" id="query" rows="4" cols="40"></textarea>
