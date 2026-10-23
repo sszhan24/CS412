@@ -24,6 +24,27 @@
     </a>
 </p>
 
+<p>
+    {% if request.user.is_authenticated %}
+        {% if request.user == post.profile.user %}
+            <!-- logged in user is viewing their own post, no like button -->
+        {% else %}
+            <!-- logged in user is viewing someone else's post -->
+            {% if has_liked %}
+                <a href="{% url 'mini_insta:unlike_post' post.pk %}">
+                    <button type="button">Unlike</button>
+                </a>
+            {% else %}
+                <a href="{% url 'mini_insta:like_post' post.pk %}">
+                    <button type="button">Like</button>
+                </a>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</p>
+
+<p><strong>Likes: {{ post.get_likes.count }}</strong></p>
+
 {% with likes=post.get_likes %}
     {% if likes.count == 0 %}
         <p><em>No likes yet.</em></p>

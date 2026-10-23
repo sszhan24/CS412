@@ -2,11 +2,11 @@
 #Sion Zhan (sszhan24@bu.edu), 9/30/26
 #Defines class based views that get data and delegate the work
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy, reverse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView, View
 from .forms import CreatePostForm, UpdateProfileForm, UpdatePostForm, CreateProfileForm
-from .models import Profile, Post, Photo
+from .models import Profile, Post, Photo, Follow, Like
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
@@ -43,6 +43,20 @@ class PostDetailView(DetailView):
     template_name = 'mini_insta/show_post.html'
     context_object_name = 'post'
 
+    def get_context_data(self, **kwargs):
+        """Add a boolean to check if the logged in user liked this post"""
+
+        context = super().get_context_data(**kwargs)
+
+        has_liked = False
+        if self.request.user.is_authenticated:
+            my_profile = Profile.objects.filter(user=self.request.user).first()
+            if my_profile:
+                has_liked = self.object.has_liked(my_profile)
+
+        context['has_liked'] = has_liked
+        return context
+
 class ProfileListView(ListView):
     """List every profile so users can browse accounts."""
 
@@ -56,6 +70,26 @@ class ProfileDetailView(DetailView):
     model = Profile
     template_name = 'mini_insta/show_profile.html'
     context_object_name = 'profile'
+
+    def get_context_data(self, **kwargs):
+        """Add a boolean to check if the logged in user is following this profile"""
+
+        context = super().get_context_data(**kwargs)
+
+        is_following = False
+
+        #check if user is logged in and has a profile
+        if self.request.user.is_authenticated:
+            #safely fetch the logged in user's profile
+            my_profile = Profile.objects.filter(user=self.request.user).first()
+
+            if my_profile:
+                #check if my_profile is following the profile being viewed (self.object)
+                is_following = my_profile.is_following(self.object)
+
+            context['is_following'] = is_following
+
+        return context
 
 class CreatePostView(ProfileLoginRequiredMixin, CreateView):
     """Display a form to create a Post for a given Profile, then save it."""
@@ -279,3 +313,62 @@ class CreateProfileView(CreateView):
 
         #re-render the template with the form errors attached to the context
         return self.render_to_response(self.get_context_data(form=form, user_form=user_form))
+
+class FollowProfileView(ProfileLoginRequiredMixin, View):
+    """Create a follow record where the logged in user follows the target profile"""
+
+    def get(self, request, pk):
+        """Handle the GET request to follow a profile"""
+
+        target_profile = get_object_or_404(Profile, pk=pk)
+        my_profile = self.get_object() #from the mixin, gets logged in user's profile
+
+        #prevent following yourself
+        if my_profile != target_profile:
+            #get_or_create prevents duplicate follows if clicked twice
+            Follow.objects.get_or_create(profile=target_profile, follower_profile=my_profile)
+
+        return redirect('mini_insta:show_profile', pk=pk)
+
+class UnfollowProfileView(ProfileLoginRequiredMixin, View):
+    """Delete a follow record between the logged in user and the target profile"""
+
+    def get(self, request, pk):
+        """Handle the GET request to unfollow the profile"""
+
+        target_profile = get_object_or_404(Profile, pk=pk)
+        my_profile = self.get_object()
+
+        if my_profile != target_profile:
+            #find and delete the follow relation
+            Follow.objects.filter(profile=target_profile, follower_profile=my_profile).delete()
+        return redirect('mini_insta:show_profile', pk=pk)
+
+class LikePostView(ProfileLoginRequiredMixin, View):
+    """Create a like record for a post"""
+
+    def get(self, request, pk):
+        """Handle the GET request to like a post"""
+
+        post = get_object_or_404(Post, pk=pk)
+        my_profile = self.get_object()
+
+        #prevent liking your own post
+        if post.profile != my_profile:
+            Like.objects.get_or_create(post=post, profile=my_profile)
+
+        return redirect('mini_insta:show_post', pk=pk)
+
+class UnlikePostView(ProfileLoginRequiredMixin, View):
+    """Delete a like record for a post"""
+
+    def get(self, request, pk):
+        """Handle the GET request to unlike a post"""
+
+        post = get_object_or_404(Post, pk=pk)
+        my_profile = self.get_object()
+
+        if post.profile != my_profile:
+            Like.objects.filter(post=post, profile=my_profile).delete()
+
+        return redirect('mini_insta:show_post', pk=pk)

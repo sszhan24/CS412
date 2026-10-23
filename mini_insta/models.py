@@ -55,6 +55,11 @@ class Profile(models.Model):
         #extract the followed profile from each
         return [f.profile for f in follows]
 
+    def is_following(self, other_profile):
+        """Return True if this profile is following the other_profile"""
+
+        return Follow.objects.filter(follower_profile=self, profile=other_profile).exists()
+
     def get_num_following(self):
         """Return the number of profiles this profile is following"""
 
@@ -108,6 +113,11 @@ class Post(models.Model):
         """Return all likes on this post"""
 
         return Like.objects.filter(post=self)
+
+    def has_liked(self, profile):
+        """Return True if the given profile has liked this post"""
+
+        return self.likes.filter(profile=profile).exists()
 
 class Photo(models.Model):
     """An image associated with a Post. Stored either as URL or uploaded file"""

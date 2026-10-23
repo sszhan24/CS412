@@ -8,13 +8,27 @@
 
 <h1>{{ profile.display_name|default:profile.username }}</h1>
 
-{% if request.user.is_authenticated and request.user == profile.user %}
-    <p>
-        <a href="{% url 'mini_insta:update_profile' %}">
-            <button type="button">Update Profile</button>
-        </a>
-    </p>
-{% endif %}
+<p>
+    {% if request.user.is_authenticated %}
+        {% if request.user == profile.user %}
+            <!-- logged in user is viewing their own profile -->
+            <a href="{% url 'mini_insta:update_profile' %}">
+                <button type="button">Update Profile</button>
+            </a>
+        {% else %}
+            <!-- logged in user is viewing someone else's profile -->
+             {% if is_following %}
+                <a href="{% url 'mini_insta:unfollow_profile' profile.pk %}">
+                    <button type="button">Unfollow</button>
+                </a>
+            {% else %}
+                <a href="{% url 'mini_insta:follow_profile' profile.pk %}">
+                    <button type="button">Follow</button>
+                </a>
+            {% endif %}
+        {% endif %}
+    {% endif %}
+</p>
 
 <div class="profile-header">
     {% if profile.profile_image_url %}
