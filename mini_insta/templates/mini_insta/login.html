@@ -11,12 +11,19 @@
 
     {{ form.as_p }}
 
-    <!-- error fix: hidden field for 'next' to redirect after login -->
-    <input type="hidden" name="next" value="{{ request.GET.next|default:'/mini_insta/' }}">
+    <!-- the 'next' field tell Django where to go after a successful login -->
+    {% if request.GET.next %}
+        <!-- if the user was redirected here from a protected page, send them back there -->
+         <input type="hidden" name="next" value="{{ request.GET.next }}">
+
+    {% else %}
+        <!-- If they just clicked Login from the nav, send them to main profiles page -->
+        <input type="hidden" name="next" value="{% url 'mini_insta:show_all_profiles' %}">
+    {% endif %}
 
     <button type="submit">Login</button>
 
 </form>
 
-<p>Don't have an account? Registration coming soon</p>
+<p>Don't have an account? <a href="{% url 'mini_insta:create_profile' %}"">Create one here</a></p>
 {% endblock %}
