@@ -1,0 +1,4 @@
+This user should be bob the builder
+
+username: testuser
+password: P@$$word
