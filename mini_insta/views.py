@@ -98,13 +98,12 @@ class CreatePostView(ProfileLoginRequiredMixin, CreateView):
     form_class = CreatePostForm
     template_name = 'mini_insta/create_post_form.html'
 
-    #def get_context_data(self, **kwargs):
-    #    """Add the Profile(from the URL pk) to the template context."""
+    def get_context_data(self, **kwargs):
+        """Add the Profile(from the URL pk) to the template context."""
 
-     #   context = super().get_context_data(**kwargs)
-    #    context['profile'] = get_object_or_404(Profile, pk=self.kwargs['pk'])
-        
-    #    return context
+        context = super().get_context_data(**kwargs)
+        context['profile'] = self.get_object()
+        return context
     
     def form_valid(self, form):
         """Attach the Profile to the Post, then create a Photo if provided."""
