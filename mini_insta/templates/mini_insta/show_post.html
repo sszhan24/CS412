@@ -13,16 +13,18 @@
 
 <p><small>{{ post.timestamp|date:"M d, Y H:i" }}</small></p>
 
-<p>
-    <a href="{% url 'mini_insta:update_post' post.pk %}">
-        <button type="button">Update</button>
-    </a>
+{% if request.user.is_authenticated and request.user == post.profile.user %}
+    <p>
+        <a href="{% url 'mini_insta:update_post' post.pk %}">
+            <button type="button">Update</button>
+        </a>
 
 
-    <a href="{% url 'mini_insta:delete_post' post.pk %}">
-        <button type="button">Delete</button>
-    </a>
-</p>
+        <a href="{% url 'mini_insta:delete_post' post.pk %}">
+            <button type="button">Delete</button>
+        </a>
+    </p>
+{% endif %}
 
 <p>
     {% if request.user.is_authenticated %}
