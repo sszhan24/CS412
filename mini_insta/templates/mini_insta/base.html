@@ -41,7 +41,7 @@
             <a href="{% url 'mini_insta:create_profile' %}">Create Profile</a>
         {% endif %}
 
-        <a href="/admin/">Admin</a>
+        <a href="{% url 'admin:index' %}">Admin</a>
     </nav>
     <hr>
     {% block content %}{% endblock %}
