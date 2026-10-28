@@ -41,7 +41,7 @@
 
         {% with first_photo=post.get_all_photos.first %}
             {% if first_photo and first_photo.get_image_url %}
-                <a href="{% url 'mini_insta:show_profile' post.pk %}">
+                <a href="{% url 'mini_insta:show_profile' post.profile.pk %}">
                     <img src="{{ first_photo.get_image_url }}" alt="post photo" width="400" class="post-photo">
                 </a>
             {% endif %}
