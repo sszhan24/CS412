@@ -1,0 +1,24 @@
+<!-- voter_analytics/templates/voter_analytics/base.html
+  Sion Zhan (sszhan24@bu.edu), 10/27/26
+  Base template for the voter_analytics application -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Voter Analytics{% endblock %}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 90px; margin: 2rem auto; padding: 0 1 rem; }
+        nav a { margin-right: 1rem; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th {background: #f4f4f4; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'voter_analytics:voters' %}">All Voters</a>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>

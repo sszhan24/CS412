@@ -28,6 +28,7 @@ urlpatterns = [
     path('formdata/', include('formdata.urls')),
     path('blog/', include('blog.urls')), #include URLs from blog project's url.py
     path('mini_insta/', include('mini_insta.urls')),
+    path('voter_analytics/', include('voter_analytics.urls')),
 ]
 
 if settings.DEBUG:

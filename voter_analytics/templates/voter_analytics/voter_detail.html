@@ -1,0 +1,66 @@
+<!-- voter_analytics/templates/voter_analytics/voter_detail.html
+  Sion Zhan (sszhan24@bu.edu), 10/27/26
+  Displays all details and voting history for a single voter. -->
+
+{% extends 'voter_analytics/base.html' %}
+{% block content %}
+<h1>{{ voter.first_name }} {{ voter.last_name }}</h1>
+
+<p><a href="{% url 'voter_analytics:voters' %}">Back to Voter List</a></p>
+
+<table>
+    <tbody>
+        <tr>
+            <th>Voter ID</th>
+            <td>{{ voter.voter_id }}</td>
+        </tr>
+        <tr>
+            <th>Date of Birth</th>
+            <td>{{ voter.date_of_birth }}</td>
+        </tr>
+        <tr>
+            <th>Date Registered</th>
+            <td>{{ voter.date_of_registration }}</td>
+        </tr>
+        <tr>
+            <th>Party Affiliation</th>
+            <td>{{ voter.party_affiliation }}</td>
+        </tr>
+        <tr>
+            <th>Precinct Number</th>
+            <td>{{ voter.precinct_number }}</td>
+        </tr>
+        <tr>
+            <th>Address</th>
+            <td>
+                {{ voter.street_number }} {{ voter.street_name }}
+                {% if voter.apartment_number %} Apt {{ voter.apartment_number }}{% endif %},
+                {{ voter.zip_code }}
+            </td>
+        </tr>
+        <tr>
+            <th>Voter Score</th>
+            <td>{{ voter.voter_score }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<h2>Voting History</h2>
+<ul>
+    <li>2020 State Election: {{ voter.v20state }}</li>
+    <li>2021 Town Election: {{ voter.v21town }}</li>
+    <li>2021 Primary Election: {{ voter.v21primary }}</li>
+    <li>2022 General Election: {{ voter.v22general }}</li>
+    <li>2023 Town Election: {{ voter.v23town }}</li>
+</ul>
+
+<h2>Address Lookup</h2>
+<p>
+    <a href="https://www.google.com/maps/search/?api=1&query={{ voter.street_number }}+{{ voter.street_name }}+{{ voter.zip_code }}"
+    target="_blank" rel="noopener noreferrer">
+    Open this address in Google Maps
+    </a>
+</p>
+
+{% endblock %}
+
