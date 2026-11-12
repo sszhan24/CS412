@@ -1,0 +1,14 @@
+<!-- picture_detail.html
+    Sion Zhan (szhan24@bu.edu), 11/10/26
+    Displays a single pictue by its primary key
+-->
+
+{% extends 'dadjokes/base.html' %}
+{% block content %}
+<div class="picture-box">
+    <h1>Picture</h1>
+    <img src="{{ picture.image_url }}" alt="Picture">
+    <p><em>- {{ picture.contributor }}, {{ picture.timestamp }}</em></p>
+</div>
+<p><a href="{% url 'dadjokes:picture_list' %}">Back to all pictures</a></p>
+{% endblock %}

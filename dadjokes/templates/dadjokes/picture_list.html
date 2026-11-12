@@ -1,0 +1,19 @@
+<!-- picture_list.html
+    Sion Zhan (szhan24@bu.edu), 11/10/26
+    Displays all pictures with no jokes
+-->
+
+{% extends 'dadjokes/base.html' %}
+{% block content %}
+<h1>All Pictures</h1>
+{% for picture in pictures %}
+    <div class="picture-box">
+        <a href="{% url 'dadjokes:picture_detail' picture.pk %}">
+            <img src="{{ picture.image_url }}" alt="Picture">
+        </a>
+        <p><small>- {{ picture.contributor }}</small></p>
+    </div>
+{% empty %}
+    <p>No pictures yet.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,30 @@
+<!-- random.html
+    Sion Zhan (szhan24@bu.edu), 11/10/26
+    Displays a randomly selected Joke and Picture
+-->
+
+{% extends 'dadjokes/base.html' %}
+{% block content %}
+<h1>Random Dad Joke and Picture</h1>
+
+{% if joke %}
+    <div class="joke-box">
+        <h2>Joke</h2>
+        <p>{{ joke.text }}</p>
+        <p><small>- {{ joke.contributor }}</small></p>
+    </div>
+{% endif %}
+
+{% if picture %}
+    <div class="picture-box">
+        <h2>Picture</h2>
+        <img src="{{ picture.image_url }}" alt="Picture">
+        <p><small>- {{ picture.contributor  }}</small></p>
+    </div>
+{% endif %}
+
+<p>
+    <a href="{% url 'dadjokes:joke_list' %}">All Jokes</a> |
+    <a href="{% url 'dadjokes:picture_list' %}">All Pictures</a>
+</p>
+{% endblock %}

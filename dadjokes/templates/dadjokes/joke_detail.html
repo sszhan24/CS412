@@ -1,0 +1,14 @@
+<!-- joke_detail.html
+    Sion Zhan (szhan24@bu.edu), 11/10/26
+    Displays the full text of a single joke by its primary key
+-->
+
+{% extends 'dadjokes/base.html' %}
+{% block content %}
+<div class="joke-box">
+    <h1>Joke</h1>
+    <p>{{ joke.text }}</p>
+    <p><em>- {{ joke.contributor }}, {{ joke.timestamp }}</em></p>
+</div>
+<p><a href="{% url 'dadjokes:joke_list' %}">Back to all jokes</a></p>
+{% endblock %}

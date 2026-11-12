@@ -1,0 +1,29 @@
+<!-- base.html
+    Sion Zhan (szhan24@bu.edu), 11/10/26
+    Base template for the dadjokes application
+-->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}Dad Jokes{% endblock %}</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 2 rem; background-color: #fafafa; }
+        nav a { margin-right: 1rem; font-weight: bold; color: #0056b3; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        h1 { border-bottom: 2px solid #ccc; padding-bottom: 10px; }
+        .joke-box { background: #fff; padding: 30px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 20px; }
+        .picture-box { padding: 30px; margin-bottom: 20px; }
+        img { max-width: 100%; border-radius: 8px ; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="{% url 'dadjokes:random' %}">Random</a>
+        <a href="{% url 'dadjokes:joke_list' %}">All Jokes</a>
+        <a href="{% url 'dadjokes:picture_list' %}">All Pictures</a>
+    </nav>
+    <hr>
+    {% block content %}{% endblock %}
+</body>
+</html>
