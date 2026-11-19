@@ -12,7 +12,13 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from .serializers import ProfileSerializer, PostSerializer
+
 # Create your views here.
+
+# HTML VIEWS
 
 class ProfileLoginRequiredMixin(LoginRequiredMixin):
     """A mixin that forces login and automatically finds the logged in user's Profile"""
@@ -371,3 +377,47 @@ class UnlikePostView(ProfileLoginRequiredMixin, View):
             Like.objects.filter(post=post, profile=my_profile).delete()
 
         return redirect('mini_insta:show_post', pk=pk)
+
+# API VIEWS
+
+class ProfileListAPIView(generics.ListAPIView):
+    """API endpoint to list all profiles"""
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+class ProfileDetailAPIView(generics.RetrieveAPIView):
+    """API endpoint to view a single profile by ID"""
+
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+
+class ProfilePostsAPIView(generics.ListAPIView):
+    """API endpoint to list all posts by a specific profile"""
+
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        """Filter the queryset to only include posts by the requested profile"""
+
+        profile_id = self.kwargs['pk']
+        return Post.objects.filter(profile_id=profile_id).order_by('-timestamp')
+
+class ProfileFeedAPIView(generics.ListAPIView):
+    """API endpoint to get the feed (posts from people the profile follows)"""
+
+    serializer_class = PostSerializer
+
+    def get_queryset(self):
+        """Return the feed of posts from profiles this profile follows"""
+        
+        profile_id = self.kwargs['pk']
+        profile = Profile.objects.get(pk=profile_id)
+        #use get_post_feed method from a previous assignment
+        return profile.get_post_feed()
+
+class PostListCreateAPIView(generics.ListCreateAPIView):
+    """API endpoint to list all posts or create a new post"""
+
+    queryset = Post.objects.all().order_by('-timestamp')
+    serializer_class = PostSerializer
