@@ -13,7 +13,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
 from .serializers import ProfileSerializer, PostSerializer
 
 # Create your views here.
@@ -385,17 +389,20 @@ class ProfileListAPIView(generics.ListAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ProfileDetailAPIView(generics.RetrieveAPIView):
     """API endpoint to view a single profile by ID"""
 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
 class ProfilePostsAPIView(generics.ListAPIView):
     """API endpoint to list all posts by a specific profile"""
 
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         """Filter the queryset to only include posts by the requested profile"""
@@ -407,6 +414,7 @@ class ProfileFeedAPIView(generics.ListAPIView):
     """API endpoint to get the feed (posts from people the profile follows)"""
 
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):
         """Return the feed of posts from profiles this profile follows"""
@@ -421,3 +429,25 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 
     queryset = Post.objects.all().order_by('-timestamp')
     serializer_class = PostSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+class CustomLoginView(ObtainAuthToken):
+    """API endpoint to log in a user and return their token and profile ID"""
+
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        """Handle POST request to authenticate credentials and return token data"""
+
+        serializer = self.serializer_class(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        profile_id = user.profile.id if hasattr(user, 'profile') else None
+
+        return Response({
+            'token': token.key,
+            'user_id': user.id,
+            'profile_id': profile_id,
+            'username': user.username
+        })

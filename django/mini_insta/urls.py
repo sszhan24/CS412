@@ -38,4 +38,5 @@ urlpatterns = [
     path('api/profiles/<int:pk>/posts/', views.ProfilePostsAPIView.as_view(), name='api_profile_posts'),
     path('api/profiles/<int:pk>/feed/', views.ProfileFeedAPIView.as_view(), name='api_profile_feed'),
     path('api/posts/', views.PostListCreateAPIView.as_view(), name='api_posts'),
+    path('api/login/', views.CustomLoginView.as_view(), name='api_login'),
 ]
