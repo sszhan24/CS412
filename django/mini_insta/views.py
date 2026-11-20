@@ -20,6 +20,9 @@ from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication
 from .serializers import ProfileSerializer, PostSerializer
 
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 
 # HTML VIEWS
@@ -431,6 +434,7 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = PostSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CustomLoginView(ObtainAuthToken):
     """API endpoint to log in a user and return their token and profile ID"""
 
