@@ -20,10 +20,22 @@ export default function LoginScreen() {
             const response = await fetch(`${API_BASE}/api/login/`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ username: username.trim(), password }),
             });
 
-            const data = await response.json();
+           // 1. Read raw text first and log it so you can see the exact server reply
+            const rawText = await response.text();
+            console.log('Login Status:', response.status);
+            console.log('Server Reply:', rawText);
+
+            // 2. Parse the text into a JSON object
+            let data;
+            try {
+                data = JSON.parse(rawText);
+            } catch (e) {
+                Alert.alert('Server Error', `Status ${response.status}: Server returned HTML/text instead of JSON.`);
+                return;
+            }
 
             if (response.ok) {
                 await AsyncStorage.setItem('userToken', data.token);
