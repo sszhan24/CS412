@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
-import { styles } from '../../assets/my_styles';
+import { styles } from '../assets/my_styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
