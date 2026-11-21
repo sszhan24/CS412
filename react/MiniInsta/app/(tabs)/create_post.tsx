@@ -37,7 +37,7 @@ export default function CreatePostScreen() {
         return;
       }
 
-      const response = await fetch(`${API_BASE}/api/posts`, {
+      const response = await fetch(`${API_BASE}/api/posts/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json', 
