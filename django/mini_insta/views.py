@@ -392,20 +392,23 @@ class ProfileListAPIView(generics.ListAPIView):
 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 class ProfileDetailAPIView(generics.RetrieveAPIView):
     """API endpoint to view a single profile by ID"""
 
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
 class ProfilePostsAPIView(generics.ListAPIView):
     """API endpoint to list all posts by a specific profile"""
 
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Filter the queryset to only include posts by the requested profile"""
@@ -417,7 +420,8 @@ class ProfileFeedAPIView(generics.ListAPIView):
     """API endpoint to get the feed (posts from people the profile follows)"""
 
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def get_queryset(self):
         """Return the feed of posts from profiles this profile follows"""
@@ -432,7 +436,8 @@ class PostListCreateAPIView(generics.ListCreateAPIView):
 
     queryset = Post.objects.all().order_by('-timestamp')
     serializer_class = PostSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
 @method_decorator(csrf_exempt, name='dispatch')
 class CustomLoginView(ObtainAuthToken):

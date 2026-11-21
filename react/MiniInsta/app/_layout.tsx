@@ -14,8 +14,9 @@ export default function RootLayout() {
     const checkAuth = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
+        const profileId = await AsyncStorage.getItem('profileId');
         // If there's no token, force user to login screen
-        if (!token) {
+        if (!token || !profileId) {
           router.replace('/login');
         }
       } catch (error) {

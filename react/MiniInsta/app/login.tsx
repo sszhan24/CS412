@@ -16,6 +16,8 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
 
     const handleLogin = async () => {
+        await AsyncStorage.multiRemove(['userToken', 'profileId']);
+
         try {
             const response = await fetch(`${API_BASE}/api/login/`, {
                 method: 'POST',
@@ -38,9 +40,12 @@ export default function LoginScreen() {
             }
 
             if (response.ok) {
+                if (data.profile_id == null) {
+                    Alert.alert('No Profile', 'This account has no profile yet.');
+                    return;
+                }
                 await AsyncStorage.setItem('userToken', data.token);
-                await AsyncStorage.setItem('profileId', data.profile_id.toString());
-
+                await AsyncStorage.setItem('profileId', String(data.profile_id));
                 // Navigate to the main tabs feed after successful login
                 router.replace('/(tabs)/feed');
             } else {
